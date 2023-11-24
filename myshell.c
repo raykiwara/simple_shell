@@ -90,7 +90,7 @@ void execute(char **array, char **argv_cpy)
 	if (child == 0)
 	{
 		if (execve(array[0], array, NULL) == -1)
-			dprintf(STDERR_FILENO, "%s: No such file or  directory\n", argv_cpy[0]);
+			dprintf(STDERR_FILENO, "%s: No such file or directory\n", argv_cpy[0]);
 	}
 	else
 		wait(NULL);
