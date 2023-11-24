@@ -6,20 +6,26 @@
 #include <sys/wait.h>
 
 char **tokeniser(char *buffer_cpy);
-void execute(char **array);
+void execute(char **array, char **argv_cpy);
 /**
  * main - Prog entry point
  *
+ * @argc: argument count
+ * @argv: argument vector
+ *
  * Return: 0 on success
  */
-int main(void)
+int main(int argc, char **argv)
 {
-	char *buffer, *buffer_cpy, **array;
+	char *buffer, *buffer_cpy, **array, **argv_cpy;
 	size_t n;
 	int length;
 
 	buffer = NULL;
 	n = 0;
+
+	if (argc != 0)
+		argv_cpy = argv;
 
 	printf("#cisfun$ ");
 	while (getline(&buffer, &n, stdin) != EOF)
@@ -28,7 +34,7 @@ int main(void)
 		buffer[length - 1] = '\0';
 		buffer_cpy = strdup(buffer);
 		array = tokeniser(buffer_cpy);
-		execute(array);
+		execute(array, argv_cpy);
 		free(buffer_cpy);
 		free(array);
 		printf("#cisfun$ ");
@@ -70,8 +76,9 @@ char **tokeniser(char *buffer_cpy)
  * execute - calls execve
  *
  * @array: arguments
+ * @argv_cpy: copy of argv
  */
-void execute(char **array)
+void execute(char **array, char **argv_cpy)
 {
 	pid_t child;
 
@@ -83,7 +90,7 @@ void execute(char **array)
 	if (child == 0)
 	{
 		if (execve(array[0], array, NULL) == -1)
-			perror("Error");
+			dprintf(STDERR_FILENO, "%s: No such file or  directory\n", argv_cpy[0]);
 	}
 	else
 		wait(NULL);
